@@ -18,3 +18,6 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+.scale-90 {
+  transform: scale(0.9);
+}
