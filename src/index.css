@@ -21,3 +21,7 @@
 .scale-90 {
   transform: scale(0.9);
 }
+
+.tileHover:hover{
+  background: rgba(130, 165, 196, 0.252);
+}

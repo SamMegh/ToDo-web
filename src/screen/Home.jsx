@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { CircleX, CircleCheckBig } from "lucide-react";
 
 export function HomeScreen() {
   const [timeValue, setTimeValue] = useState("12:00");
@@ -6,6 +7,7 @@ export function HomeScreen() {
   const todolist = JSON.parse(localStorage.getItem("todos")) || [];
   const [listOfToDo, setListOfToDo] = useState([...todolist]);
   const isDone = false;
+  const isdeleted = false;
   const handelAddTask = (e) => {
     e.preventDefault();
     const clickedButton = e.currentTarget;
@@ -15,6 +17,7 @@ export function HomeScreen() {
         todoname: inputValue,
         todotime: timeValue,
         isDone,
+        isdeleted
       };
       listOfToDo.push(todoitem);
       localStorage.setItem("todos", JSON.stringify(listOfToDo));
@@ -27,30 +30,38 @@ export function HomeScreen() {
     }, 100);
   };
 
+  const handleDoneFuction=()=>{
+    console.log("done");
+  }
+  const handelDeleteFuntion=()=>{
+    console.log("deleted");
+  }
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center h-screen select-none">
       <div className="max-w-[400px] min-w-[318px] h-[80vh] max-h-fit p-[15px] bg-amber-50 text-black rounded-[20px]">
         {/* todo list */}
-        <div className="max-h-[60%] rounded-[10px] p-1.5 capitalize overflow-scroll scrollbar-hide">
+        <div className="max-h-[60%] rounded-[10px] p-1.5 capitalize overflow-scroll scrollbar-hide select-text ">
           {todolist.length > 0 ? (
             todolist.map((todo, index) => {
-              return (
+              return (!todo.isDone&&!todo.isdeleted) ? ( 
                 <div
                   key={index}
-                  className="flex justify-between items-center bg-[rgb(196,222,242)] mb-1 p-2 rounded-lg shadow-md"
+                  className="flex justify-between items-center bg-[rgb(196,222,242)] tileHover mb-1 p-2 rounded-lg shadow-md"
                 >
                   <p className="text-gray-800 font-medium">{todo.todoname}</p>
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">
                       {todo.todotime}
                     </span>
-                    <input type="checkbox" />
+                    
+                    <CircleCheckBig size={18} color="green" onClick={handleDoneFuction} />
+                    <CircleX size={18} color="red" onClick={handelDeleteFuntion} />
                   </div>
                 </div>
-              );
+              ) : null;
             })
           ) : (
-            <p className="text-center  mb-1 p-2 rounded-lg  shadow-md bg-[rgb(196,222,242)]">
+            <p className="text-center mb-1 p-2 rounded-lg shadow-md bg-[rgb(196,222,242)]">
               No tasks yet. Add one above!
             </p>
           )}
