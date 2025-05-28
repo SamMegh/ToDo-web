@@ -1,19 +1,24 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export function HomeScreen() {
   const [timeValue, setTimeValue] = useState("12:00");
   const [inputValue, setInputValue] = useState();
-  const [listOfToDo, setListOfToDo] = useState([]);
-
+  const todolist = JSON.parse(localStorage.getItem("todos")) || [];
+  const [listOfToDo, setListOfToDo] = useState([...todolist]);
+  const isDone = false;
   const handelAddTask = (e) => {
     e.preventDefault();
     const clickedButton = e.currentTarget;
     clickedButton.classList.add("scale-90");
     if (inputValue.trim() !== "") {
-      listOfToDo.push(inputValue);
-      console.log(inputValue);
+      const todoitem = {
+        todoname: inputValue,
+        todotime: timeValue,
+        isDone,
+      };
+      listOfToDo.push(todoitem);
+      localStorage.setItem("todos", JSON.stringify(listOfToDo));
       setInputValue("");
-      console.log(listOfToDo);
     }
     setTimeout(() => {
       if (clickedButton) {
@@ -22,18 +27,32 @@ export function HomeScreen() {
     }, 100);
   };
 
-
   return (
     <div className="flex justify-center items-center h-screen">
-      <div className="max-w-[400px] min-w-[318px] min-h-fit max-h-[80vh] p-[15px] bg-amber-50 text-black rounded-[20px]">
+      <div className="max-w-[400px] min-w-[318px] h-[80vh] max-h-fit p-[15px] bg-amber-50 text-black rounded-[20px]">
         {/* todo list */}
-        <div className="max-h-[60%] rounded-[10px] p-1.5 capitalize bg-[rgb(196,222,242)] overflow-scroll scrollbar-hide">
-                {listOfToDo.length > 0 ? ( // <--- ADDITION: Conditionally render a message if the list is empty
-            [...listOfToDo].reverse().map((todo, index) => {
-              return <p key={index} className="mb-1 border-1 p-2 bg-blue-100 rounded-2xl shadow-lg">{todo}</p>; // Added margin-bottom for spacing
+        <div className="max-h-[60%] rounded-[10px] p-1.5 capitalize overflow-scroll scrollbar-hide">
+          {todolist.length > 0 ? (
+            todolist.map((todo, index) => {
+              return (
+                <div
+                  key={index}
+                  className="flex justify-between items-center bg-[rgb(196,222,242)] mb-1 p-2 rounded-lg shadow-md"
+                >
+                  <p className="text-gray-800 font-medium">{todo.todoname}</p>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-gray-600">
+                      {todo.todotime}
+                    </span>
+                    <input type="checkbox" />
+                  </div>
+                </div>
+              );
             })
           ) : (
-            <p className="text-gray-400 text-center">No tasks yet. Add one above!</p>
+            <p className="text-center  mb-1 p-2 rounded-lg  shadow-md bg-[rgb(196,222,242)]">
+              No tasks yet. Add one above!
+            </p>
           )}
         </div>
         {/* input component of the todo list is here  */}
@@ -52,7 +71,6 @@ export function HomeScreen() {
               value={timeValue}
               className="focus:outline-none border-b-1 w-fit text-[10px]  "
               onChange={(e) => setTimeValue(e.target.value)}
-              
             />
           </div>
           <button
